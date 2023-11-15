@@ -11,11 +11,11 @@
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             text-align: center;
+            line-height: 1.6;
         }
 
         header {
@@ -23,7 +23,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
+            width: 100%;
             max-width: 600px;
             margin-bottom: 20px;
         }
@@ -42,24 +42,144 @@
             color: #4caf50;
             text-decoration: none;
             margin-top: 15px;
+            transition: color 0.3s;
         }
 
         a:hover {
             text-decoration: underline;
+            color: #45a049;
+        }
+
+        section {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form input, form textarea {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4caf50;
+            color: #fff;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Профіль користувача {{ user.username }}</h1>
-    <p>First name: {{ user.first_name }}</p>
-    <p>Last name: {{ user.last_name }}</p>
-    <p>Email: {{ user.email }}</p>
-</header>
+<div style="flex: 1; padding: 0 10px;">
+    <header>
+        <h1>User profile {{ user.username }}</h1>
+        <p>First name: {{ user.first_name }}</p>
+        <p>Last name: {{ user.last_name }}</p>
+        <p>Email: {{ user.email }}</p>
+    </header>
 
-<a href="{% url 'edit_profile' %}">Редагувати профіль</a>
-<a href="{% url 'home' %}">На головну</a>
+    <section>
+        <a href="{% url 'edit_profile' %}">Edit profile</a><br>
+        <a href="{% url 'home' %}">To home</a>
+    </section>
+
+    <section>
+        <h2>Sites list</h2>
+        {% if user_sites %}
+            <ul>
+                {% for site in user_sites %}
+                    <li><a href="{% url 'proxy_site' user_site_name=site.name|slugify site_url=site.url %}">{{ site.name }} - {{ site.url }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>The user has not added any site yet.</p>
+        {% endif %}
+    </section>
+</div>
+
+<div style="flex: 1; padding: 0 10px;">
+    <section>
+        <h2>Sites stats</h2>
+        {% if site_stats %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Site</th>
+                        <th>Number of clicks</th>
+                        <th>Traffic (MB)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stats in site_stats %}
+                        <tr>
+                            <td>{{ stats.site }}</td>
+                            <td>{{ stats.total_clicks }}</td>
+                            <td>{{ stats.total_traffic_mb|floatformat:2 }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>There are no statistics for the sites.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Add a new site</h2>
+        <form method="post" action="{% url 'add_site' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add site</button>
+        </form>
+    </section>
+</div>
 
 </body>
 </html>

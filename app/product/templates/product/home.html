@@ -49,12 +49,12 @@
 <body>
 
 <header>
-    <h1>Вітаємо на головній сторінці!</h1>
+    <h1>Welcome to the main page!</h1>
     {% if user.is_authenticated %}
-        <p>Ви увійшли як {{ user.username }}. <a href="{% url 'logout' %}">Вийти</a></p>
-        <a href="{% url 'profile' %}">Профіль</a>
+        <p>You are logged in as {{ user.username }}. <a href="{% url 'logout' %}">Logout</a></p>
+        <a href="{% url 'profile' %}">Profile</a>
     {% else %}
-        <p>Ви не увійшли. <a href="{% url 'login' %}">Увійти</a> або <a href="{% url 'signup' %}">Зареєструватися</a></p>
+        <p>You are not logged in. <a href="{% url 'login' %}">Login</a> або <a href="{% url 'signup' %}">Register</a></p>
     {% endif %}
 </header>
 
